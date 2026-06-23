@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Analytics\Security\CredentialVault;
 use App\Models\DataSource;
 use App\Models\Organization;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,11 +23,11 @@ class DataSourceFactory extends Factory
             'organization_id' => Organization::factory(),
             'name' => fake()->words(2, asText: true),
             'driver' => fake()->randomElement(['postgres', 'mysql', 'bigquery', 'snowflake', 'clickhouse']),
-            'encrypted_config' => [
+            'encrypted_config' => app(CredentialVault::class)->encryptDataSourceConfig([
                 'host' => fake()->domainName(),
                 'port' => fake()->numberBetween(1024, 65535),
                 'database' => fake()->word(),
-            ],
+            ]),
             'capabilities' => [
                 'supports_window_functions' => true,
                 'supports_ctes' => true,

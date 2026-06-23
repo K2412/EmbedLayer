@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Analytics\Security;
 
 use App\Analytics\Support\Exceptions\CredentialVaultException;
+use App\Models\DataSource;
+use App\Models\SemanticProvider;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Encryption\Encrypter;
 use SensitiveParameter;
@@ -73,6 +75,38 @@ final class CredentialVault
     public function decryptConfig(string $ciphertext): array
     {
         return self::deserialize($this->decryptWithRotation($ciphertext));
+    }
+
+    /**
+     * @param  array<string, mixed>  $config
+     */
+    public function encryptDataSourceConfig(#[SensitiveParameter] array $config): string
+    {
+        return $this->encryptConfig($config);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function decryptDataSourceConfig(DataSource $dataSource): array
+    {
+        return $this->decryptConfig((string) $dataSource->encrypted_config);
+    }
+
+    /**
+     * @param  array<string, mixed>  $config
+     */
+    public function encryptProviderConfig(#[SensitiveParameter] array $config): string
+    {
+        return $this->encryptConfig($config);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function decryptProviderConfig(SemanticProvider $provider): array
+    {
+        return $this->decryptConfig((string) $provider->encrypted_config);
     }
 
     /**

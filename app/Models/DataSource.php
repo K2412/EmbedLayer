@@ -18,7 +18,7 @@ use Illuminate\Support\Carbon;
  * @property string $organization_id
  * @property string $name
  * @property string $driver
- * @property array<string, mixed> $encrypted_config
+ * @property string $encrypted_config
  * @property array<string, mixed>|null $capabilities
  * @property array<string, mixed>|null $last_introspected_schema
  * @property Carbon|null $last_tested_at
@@ -49,7 +49,7 @@ class DataSource extends Model
     protected function casts(): array
     {
         return [
-            'encrypted_config' => 'array',
+            'encrypted_config' => 'string',
             'capabilities' => 'array',
             'last_introspected_schema' => 'array',
             'last_tested_at' => 'datetime',

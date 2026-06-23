@@ -6,8 +6,6 @@ use App\Analytics\Actions\Dashboards\AddChartToDashboard;
 use App\Analytics\Actions\Dashboards\CreateDashboard;
 use App\Analytics\Actions\Dashboards\PublishDashboard;
 use App\Analytics\Actions\DataSources\CreateDataSource;
-use App\Analytics\Actions\DataSources\IntrospectDataSource;
-use App\Analytics\Actions\DataSources\TestDataSourceConnection;
 use App\Analytics\Actions\Embeds\GenerateEmbedToken;
 use App\Analytics\Actions\Embeds\ResolveEmbedContext;
 use App\Analytics\Actions\SemanticModels\AddDimensionToModel;
@@ -18,7 +16,6 @@ use App\Analytics\Actions\SemanticModels\ValidateSemanticModel;
 use App\Analytics\Security\CredentialVault;
 use App\Analytics\Support\Exceptions\CredentialVaultException;
 use App\Models\AnalyticsProject;
-use App\Models\DataSource;
 use App\Models\Embed;
 use App\Models\Organization;
 use App\Models\SemanticModel;
@@ -135,8 +132,6 @@ it('CreateDashboard, AddChartToDashboard, PublishDashboard flow', function () {
 
 it('skeleton actions for later milestones explicitly throw RuntimeException', function () {
     $cases = [
-        TestDataSourceConnection::class => fn ($a) => $a->handle(DataSource::factory()->create()),
-        IntrospectDataSource::class => fn ($a) => $a->handle(DataSource::factory()->create()),
         ValidateSemanticModel::class => fn ($a) => $a->handle(SemanticModel::factory()->create()),
         GenerateEmbedToken::class => fn ($a) => $a->handle(Embed::factory()->create(), []),
         ResolveEmbedContext::class => fn ($a) => $a->handle('token'),

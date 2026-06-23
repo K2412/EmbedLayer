@@ -19,7 +19,7 @@ use Illuminate\Support\Carbon;
  * @property string $name
  * @property string $type
  * @property string|null $data_source_id
- * @property array<string, mixed>|null $encrypted_config
+ * @property string|null $encrypted_config
  * @property array<string, mixed>|null $capabilities
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -45,7 +45,7 @@ class SemanticProvider extends Model
     protected function casts(): array
     {
         return [
-            'encrypted_config' => 'array',
+            'encrypted_config' => 'string',
             'capabilities' => 'array',
         ];
     }
