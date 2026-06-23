@@ -1,0 +1,2439 @@
+{
+  "nodes": [
+    {
+      "key": "top",
+      "title": "EmbedLayer: customer-facing analytics platform",
+      "type": "epic",
+      "priority": 0,
+      "labels": [
+        "embedlayer"
+      ],
+      "description": "Top-level epic tracking V1, V2, and V3 of EmbedLayer per embedlayer_v1_v3_technical_plan.md.\n\nGoal: a customer-facing analytics platform SaaS companies embed into their own apps, backed by Laravel + Livewire control plane, Svelte/TypeScript embeddable runtime, an internal structured semantic layer, and external semantic-provider adapters (Cube, dbt SL).\n\nNon-negotiable principles:\n- No SQLGlot / no runtime SQL parsing.\n- Chart builder works on semantic fields, not SQL.\n- Every backend is a SemanticProvider.\n- Runtime is backend-agnostic; tenant policies are server-side."
+    },
+    {
+      "key": "v1",
+      "title": "V1: prove embedded governed analytics end-to-end",
+      "type": "epic",
+      "priority": 0,
+      "labels": [
+        "v1"
+      ],
+      "description": "Smallest version that proves: connect a data source, define governed metrics/dimensions, build dashboards, embed into a host app, enforce tenant isolation, render customer-facing analytics.\n\nDo NOT build in V1: AI, Cube/dbt adapters, NL queries, arbitrary SQL fields, complex join graphs, pre-aggregations, polished drag-drop builder, advanced cache engine. (Plan \u00a714, \u00a721)"
+    },
+    {
+      "key": "v2",
+      "title": "V2: framework-neutral embed + external semantic providers + governance",
+      "type": "epic",
+      "priority": 1,
+      "labels": [
+        "v2"
+      ],
+      "description": "Web-component runtime, Cube adapter, dbt Semantic Layer adapter, stronger caching, versioning/publish workflow, governance. (Plan \u00a715)"
+    },
+    {
+      "key": "v3",
+      "title": "V3: governed analytics application platform (AI, NL, pre-aggs, multi-provider)",
+      "type": "epic",
+      "priority": 2,
+      "labels": [
+        "v3"
+      ],
+      "description": "AI-assisted model/dashboard creation, NL \u2192 SemanticQuery, pre-aggregations, multi-provider dashboards, metric testing, anomaly detection. AI is suggestion-only; validation stays deterministic. (Plan \u00a716)"
+    },
+    {
+      "key": "m0",
+      "title": "M0: foundations \u2014 app/Analytics scaffold, base tables, credential vault",
+      "type": "epic",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m0",
+        "backend"
+      ],
+      "description": "Cross-cutting foundations every other V1 milestone depends on: namespace scaffold per plan \u00a73, org/project tables, embedlayer config, CredentialVault service. Not a milestone in the plan but breaking it out keeps M1 unblocked from a single huge task."
+    },
+    {
+      "key": "m1",
+      "title": "M1: core Laravel domain (migrations, models, actions, policies, factories)",
+      "type": "epic",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m1",
+        "backend"
+      ],
+      "description": "Plan \u00a714.3 M1. Deliverables: projects, data_sources, semantic_providers, semantic_models, measures, dimensions, joins, dashboards, charts, embeds.\n\nExit criteria: migrations + factories + policies exist; base Livewire pages exist; domain actions covered by tests."
+    },
+    {
+      "key": "m2",
+      "title": "M2: data source connectivity (Postgres, MySQL, one warehouse)",
+      "type": "epic",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m2",
+        "backend"
+      ],
+      "description": "Plan \u00a714.3 M2 + \u00a79. Deliverables: Postgres + MySQL + (BigQuery OR Snowflake) connectors, credential encryption, connection testing, schema introspection.\n\nExit criteria: user can connect, test, view discovered tables/columns; failed connection returns safe error."
+    },
+    {
+      "key": "m3",
+      "title": "M3: internal semantic modeling (measures, dimensions, joins, policies)",
+      "type": "epic",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m3",
+        "backend",
+        "livewire"
+      ],
+      "description": "Plan \u00a714.3 M3. Deliverables: model/measure/dimension/join/access-policy builders + model validator + preview query.\n\nExit criteria: user can define orders model + revenue/count measures + country/status/date dimensions; preview works; invalid fields rejected pre-execution."
+    },
+    {
+      "key": "m4",
+      "title": "M4: deterministic query compiler (no SQLGlot)",
+      "type": "epic",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m4",
+        "backend"
+      ],
+      "description": "Plan \u00a714.3 M4 + \u00a78. Deliverables: SqlDialect contract + Postgres/MySQL/warehouse dialects + InternalQueryCompiler + FieldValidator + AccessPolicyCompiler.\n\nExit criteria: SemanticQuery compiles to parameterized SQL; tenant policy injected; unsupported grain/field/filter throws typed exception; generated SQL snapshot-tested per dialect."
+    },
+    {
+      "key": "m5",
+      "title": "M5: dashboard builder (Livewire) + chart types",
+      "type": "epic",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m5",
+        "livewire"
+      ],
+      "description": "Plan \u00a714.3 M5. Deliverables: dashboard/chart CRUD, chart query builder, chart preview, layout persistence; chart types: number_card, bar_chart, line_chart, table.\n\nExit criteria: user can build a dashboard with all four chart types; dashboard preview uses the same query pipeline as embed mode; chart cannot access fields not allowed by its model."
+    },
+    {
+      "key": "m6",
+      "title": "M6: embedding (token, iframe route, embed API, pipeline)",
+      "type": "epic",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m6",
+        "backend",
+        "security"
+      ],
+      "description": "Plan \u00a714.3 M6 + \u00a710 + \u00a711. Deliverables: embed config + allowed domains + token gen + iframe route + embed API + QueryExecutionPipeline with tenant enforcement.\n\nExit criteria: external app loads iframe dashboard with valid token; expired/invalid/wrong-domain tokens fail; tenant context enforced; queries respect external account ID."
+    },
+    {
+      "key": "m7",
+      "title": "M7: minimal Svelte/TypeScript embedded runtime",
+      "type": "epic",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m7",
+        "frontend",
+        "svelte"
+      ],
+      "description": "Plan \u00a714.3 M7 + \u00a712. Deliverables: chart renderer, dashboard loader, filter state, loading/error states, theme config; ships inside the iframe initially.\n\nExit criteria: runtime renders dashboard in iframe; calls Laravel embed API; runtime does NOT know provider type; runtime accepts only token + dashboardId."
+    },
+    {
+      "key": "mcache",
+      "title": "V1 caching by semantic-query hash",
+      "type": "epic",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "caching",
+        "backend"
+      ],
+      "description": "Plan \u00a714.2. Cache result by hash(org_id, project_id, external_account_id, chart_id, query); TTL default 5min; per-chart TTL; CheckCache/StoreResultCache pipes. No pre-aggregation in V1."
+    },
+    {
+      "key": "mobs",
+      "title": "V1 observability: query_runs + duration + cache hit/miss",
+      "type": "epic",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "observability",
+        "backend"
+      ],
+      "description": "Plan \u00a719. Persist analytics_query_runs from V1: provider type, dashboard/chart id, tenant id, status, duration, cache hit, error type, timeout flag. No raw bindings unless privacy model exists."
+    },
+    {
+      "key": "msec",
+      "title": "V1 security & credential hygiene",
+      "type": "epic",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "security",
+        "backend"
+      ],
+      "description": "Plan \u00a711.3, \u00a717.4. Encrypted creds at rest, never exposed to runtime; least-privilege docs; rotation support; audit connection tests & query runs; don't log sensitive bindings."
+    },
+    {
+      "key": "m0-namespace",
+      "title": "Scaffold app/Analytics namespace per plan \u00a73",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m0",
+        "backend"
+      ],
+      "description": "Create app/Analytics with Actions/, DataSources/, Semantic/, Compiler/, Pipelines/, Security/, Support/ subtrees as laid out in \u00a73. Add empty `.gitkeep`s where needed and a single namespace README pointing to the plan.",
+      "acceptance": "Directory tree matches \u00a73 of embedlayer_v1_v3_technical_plan.md. composer dump-autoload finds App\\Analytics namespace cleanly."
+    },
+    {
+      "key": "m0-config",
+      "title": "Create config/embedlayer.php with signing key, drivers, defaults",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m0",
+        "backend"
+      ],
+      "description": "Add config/embedlayer.php exposing: embed_signing_key (env), default_ttl_seconds (300), enabled_drivers (postgres, mysql, bigquery|snowflake), enabled_providers (internal), default_row_limit, default_query_timeout_ms, allowed_origins. Read in config/services.php style.",
+      "acceptance": "config('embedlayer.embed_signing_key') resolves from .env; values used by EmbedTokenManager and pipeline pipes."
+    },
+    {
+      "key": "m0-orgs",
+      "title": "Organizations, projects, teams base migrations + models",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m0",
+        "backend"
+      ],
+      "description": "Migrations for organizations, teams, analytics_projects with ULID primary keys; Eloquent models + factories. All later analytics tables FK organization_id and project_id onto these.",
+      "acceptance": "Migrations run on a clean db; Organization, Team, AnalyticsProject models + factories pass a smoke test."
+    },
+    {
+      "key": "m0-credvault",
+      "title": "CredentialVault service (encrypt/decrypt + key rotation hooks)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m0",
+        "security",
+        "backend"
+      ],
+      "description": "App\\Analytics\\Security\\CredentialVault wraps Laravel Crypt with: encryptDataSourceConfig(array), decryptDataSourceConfig(DataSource), encryptProviderConfig(array), decryptProviderConfig(SemanticProvider). Keys come from config/embedlayer; supports key rotation by re-encrypting on save.",
+      "acceptance": "Pest test: round-trip encrypt/decrypt; rotation re-encrypts existing rows; raw DB column never readable as plaintext."
+    },
+    {
+      "key": "m1-mig-data-sources",
+      "title": "Migration: analytics_data_sources (\u00a74.2)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m1",
+        "backend",
+        "migration"
+      ],
+      "description": "ULID id, org FK, name, driver, encrypted_config json, capabilities json nullable, last_introspected_schema json nullable, last_tested_at, last_introspected_at, timestamps, idx(org, driver). Verbatim from \u00a74.2.",
+      "acceptance": "Migration matches \u00a74.2; rollback clean."
+    },
+    {
+      "key": "m1-mig-providers",
+      "title": "Migration: analytics_semantic_providers (\u00a74.3)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m1",
+        "backend",
+        "migration"
+      ],
+      "description": "ULID id, org FK, name, type ('internal'|'cube'|'dbt_semantic_layer'), nullable data_source_id FK, encrypted_config, capabilities json, idx(org,type).",
+      "acceptance": "Matches \u00a74.3; data_source_id nullable so external providers (Cube/dbt) don't require a data source."
+    },
+    {
+      "key": "m1-mig-models",
+      "title": "Migration: analytics_semantic_models (\u00a74.4)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m1",
+        "backend",
+        "migration"
+      ],
+      "description": "ULID id, org FK, semantic_provider_id FK cascade, name, label, description, base_table, base_table_alias, is_enabled, version int default 1, unique(provider_id, name).",
+      "acceptance": "Matches \u00a74.4."
+    },
+    {
+      "key": "m1-mig-measures",
+      "title": "Migration: analytics_measures (\u00a74.5)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m1",
+        "backend",
+        "migration"
+      ],
+      "description": "Per \u00a74.5: name, label, description, type (count|count_distinct|sum|avg|min|max|ratio|calculated), column, expression json, filters json, format (currency|percent|number|duration), is_public, unique(model_id,name).",
+      "acceptance": "Matches \u00a74.5; calculated metrics reference other measures by name in `expression` JSON (no SQL fragments)."
+    },
+    {
+      "key": "m1-mig-dimensions",
+      "title": "Migration: analytics_dimensions (\u00a74.6)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m1",
+        "backend",
+        "migration"
+      ],
+      "description": "type (string|number|boolean|time), column, table_alias nullable, is_filterable/is_groupable/is_public, allowed_time_grains json nullable, unique(model_id,name).",
+      "acceptance": "Matches \u00a74.6."
+    },
+    {
+      "key": "m1-mig-joins",
+      "title": "Migration: analytics_joins (\u00a74.7) \u2014 explicit, limited",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m1",
+        "backend",
+        "migration"
+      ],
+      "description": "left_table_alias, left_column, right_table, right_table_alias, right_column, type (inner|left default left), relationship (one_to_one|many_to_one|one_to_many). V1 strongly prefers many_to_one fact\u2192dimension joins.",
+      "acceptance": "Matches \u00a74.7."
+    },
+    {
+      "key": "m1-mig-policies",
+      "title": "Migration: analytics_access_policies (\u00a74.8)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m1",
+        "backend",
+        "migration",
+        "security"
+      ],
+      "description": "Per-model rules json, is_required default true.",
+      "acceptance": "Matches \u00a74.8. is_required=true on tenant_isolation policy enforced by compiler tests."
+    },
+    {
+      "key": "m1-mig-dashboards",
+      "title": "Migrations: dashboards, dashboard_tabs, charts, chart_queries, chart_layouts",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m1",
+        "backend",
+        "migration"
+      ],
+      "description": "Per \u00a74.1 list. Charts ref dashboard + model + chart type (number_card|bar_chart|line_chart|table). chart_queries stores the SemanticQuery JSON. chart_layouts stores grid coords/sizes.",
+      "acceptance": "All five tables exist with FKs and indices."
+    },
+    {
+      "key": "m1-mig-embeds",
+      "title": "Migrations: embeds, embed_domains, embed_tokens",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m1",
+        "backend",
+        "migration",
+        "security"
+      ],
+      "description": "Embeds: dashboard FK, name, default TTL, theme JSON. embed_domains: embed FK, host (no wildcards V1). embed_tokens: embed FK, jti, expires_at, external_account_id, payload hash for revocation/audit.",
+      "acceptance": "Tables created; jti unique."
+    },
+    {
+      "key": "m1-mig-queryops",
+      "title": "Migrations: analytics_query_runs, analytics_query_cache_entries",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m1",
+        "backend",
+        "migration",
+        "observability",
+        "caching"
+      ],
+      "description": "query_runs per \u00a719 (provider_type, model_name, dashboard/chart FK, status enum, duration_ms, cache_hit, query_shape json, error_message). cache_entries per \u00a715.5 schema but in V1 (organization FK, cache_key unique, result json, metadata json, expires_at, last_accessed_at, idx(org, expires_at)).",
+      "acceptance": "Both tables created."
+    },
+    {
+      "key": "m1-models",
+      "title": "Eloquent models + factories for every analytics_* table",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m1",
+        "backend"
+      ],
+      "description": "Models: DataSource, SemanticProvider, SemanticModel, Measure, Dimension, Join, AccessPolicy, Dashboard, DashboardTab, Chart, ChartQuery, ChartLayout, Embed, EmbedDomain, EmbedToken, QueryRun, QueryCacheEntry. Each with belongsTo/hasMany + a factory + ULID generation.",
+      "acceptance": "Each model has factory; factory pest test creates+persists a tree from org \u2192 dashboard \u2192 chart."
+    },
+    {
+      "key": "m1-policies",
+      "title": "Authorization policies (organization scoping)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m1",
+        "backend",
+        "security"
+      ],
+      "description": "Laravel Policies for DataSource, SemanticModel, Dashboard, Embed: every action scoped to user.organization_id == model.organization_id. Used by Livewire screens and embed APIs.",
+      "acceptance": "Pest tests: a user from org A cannot view/edit org B records."
+    },
+    {
+      "key": "m1-actions",
+      "title": "Skeleton domain Actions per \u00a73 (CRUD + factories of intent)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m1",
+        "backend"
+      ],
+      "description": "Create skeletons for: CreateDataSource, TestDataSourceConnection, IntrospectDataSource, CreateSemanticModel, AddMeasureToModel, AddDimensionToModel, AddJoinToModel, ValidateSemanticModel, CreateDashboard, AddChartToDashboard, PublishDashboard, GenerateEmbedToken, ResolveEmbedContext, RunSemanticQuery, CompileInternalSemanticQuery. Wire DI in a Service Provider. Real logic comes in later milestones.",
+      "acceptance": "All actions classloadable; each has at least a Pest stub asserting the public signature."
+    },
+    {
+      "key": "m2-contract",
+      "title": "DataSourceConnector contract + DTOs (\u00a79.1)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m2",
+        "backend"
+      ],
+      "description": "App\\Analytics\\DataSources\\Contracts\\DataSourceConnector with testConnection(), introspect(), execute(CompiledQuery), capabilities(). DTOs: ConnectionTestResult, SchemaCatalog (+ Table/Column catalogs), DataSourceCapabilities (supportsSql, supportsJoins, supportsDateTrunc, supportedTimeGrains, dialect).",
+      "acceptance": "Contract + DTOs land; manager DataSourceConnectorManager::forDataSource(DataSource) resolves to a connector by driver."
+    },
+    {
+      "key": "m2-postgres",
+      "title": "PostgresConnector (\u00a79.2)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m2",
+        "backend",
+        "postgres"
+      ],
+      "description": "Implement PostgresConnector exactly as \u00a79.2: dynamic config([\"database.connections.analytics_{id}\" => ...]), DB::connection(), select against information_schema for introspect, capabilities supportsSql/Joins/DateTrunc=true.",
+      "acceptance": "Integration test against a docker Postgres: testConnection() ok, introspect() returns expected schema rows, execute() runs a parameterized SELECT."
+    },
+    {
+      "key": "m2-mysql",
+      "title": "MySqlConnector",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m2",
+        "backend",
+        "mysql"
+      ],
+      "description": "Mirror PostgresConnector for MySQL. introspect() uses information_schema.columns. Capabilities: supportsDateTrunc=false (use DATE_FORMAT in MySqlDialect).",
+      "acceptance": "Integration test against docker MySQL 8 mirrors Postgres connector test."
+    },
+    {
+      "key": "m2-warehouse-decision",
+      "title": "DECISION: BigQuery vs Snowflake for V1 warehouse",
+      "type": "decision",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m2",
+        "decision"
+      ],
+      "description": "Pick ONE warehouse for V1. Trade-offs: BigQuery (service account JSON, free tier easier for OSS demos, dialect more divergent) vs Snowflake (account/role/warehouse/user, more enterprise-y, paid only). Plan \u00a714.2 explicitly says ONE of the two in V1.",
+      "acceptance": "Decision recorded in this issue's notes + README; m2-warehouse-conn and m4-warehouse-dialect tasks updated to match."
+    },
+    {
+      "key": "m2-warehouse-conn",
+      "title": "Warehouse connector (BigQuery OR Snowflake \u2014 per decision)",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m2",
+        "backend",
+        "warehouse"
+      ],
+      "description": "Implement the connector chosen in m2-warehouse-decision. Encrypted creds via CredentialVault. introspect() must populate SchemaCatalog the same way the SQL connectors do.",
+      "acceptance": "Either mocked (acceptable for V1 per \u00a718.3) or live integration test covers testConnection / introspect / execute."
+    },
+    {
+      "key": "m2-introspect-action",
+      "title": "IntrospectDataSource action \u2014 persist schema catalog",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m2",
+        "backend"
+      ],
+      "description": "Runs connector.introspect(), serializes SchemaCatalog \u2192 analytics_data_sources.last_introspected_schema; stamps last_introspected_at; emits a domain event.",
+      "acceptance": "After running, DataSource row has populated last_introspected_schema; idempotent on repeat."
+    },
+    {
+      "key": "m2-test-conn-action",
+      "title": "TestDataSourceConnection action with safe error redaction",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m2",
+        "backend",
+        "security"
+      ],
+      "description": "Action wraps connector.testConnection() and translates raw exceptions into a sanitized ConnectionTestResult (no host:port leakage in error.message). Per \u00a717.4 / \u00a714.2 'failed connection returns safe error message'.",
+      "acceptance": "Pest: invalid creds produce ConnectionTestResult::failed with a non-leaky message."
+    },
+    {
+      "key": "m2-timeouts-limits",
+      "title": "Query timeout + default row limit enforcement at connector layer",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m2",
+        "backend",
+        "reliability"
+      ],
+      "description": "Set per-connection statement_timeout (Postgres), max_execution_time (MySQL), job timeout (warehouse). Inject default row limit from config if SemanticQuery has none. Surface QueryTimeoutException.",
+      "acceptance": "Test that triggers a long sleep aborts within the configured timeout and raises QueryTimeoutException."
+    },
+    {
+      "key": "m2-livewire-conn",
+      "title": "Livewire screens: create data source, test, introspect, view schema",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m2",
+        "livewire",
+        "frontend"
+      ],
+      "description": "Flux-based Livewire pages: list data sources, create wizard (per-driver fields), Test button, Introspect button, schema browser tree.",
+      "acceptance": "Manual: end-to-end create \u2192 test \u2192 introspect flow works for Postgres + MySQL."
+    },
+    {
+      "key": "m2-integration-tests",
+      "title": "docker-compose Postgres + MySQL for integration tests (\u00a718.3)",
+      "type": "task",
+      "priority": 2,
+      "labels": [
+        "v1",
+        "m2",
+        "testing",
+        "ci"
+      ],
+      "description": "tests/docker-compose.yml with seeded Postgres + MySQL; Pest test base class that boots containers and points test DataSource rows at them.",
+      "acceptance": "CI job runs the integration suite green."
+    },
+    {
+      "key": "m3-dtos",
+      "title": "Semantic DTOs: SemanticQuery, SemanticResult, ProviderContext, TimeDimension, Filter (\u00a75)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m3",
+        "backend"
+      ],
+      "description": "final readonly DTOs per \u00a75.1-5.3. Constructor-promoted; immutable; JsonSerializable. Filter has field/operator/value (+ value_from_context for access policies).",
+      "acceptance": "All DTOs land; SemanticQuery serializes/deserializes deterministically for cache-key hashing."
+    },
+    {
+      "key": "m3-model-action",
+      "title": "CreateSemanticModel action + model repository",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m3",
+        "backend"
+      ],
+      "description": "Persists analytics_semantic_models row tied to a semantic provider (and through it, optionally a data source). SemanticModelRepository::findForQuery(orgId, modelName) loads the full graph (model + measures + dimensions + joins + policies).",
+      "acceptance": "Pest: create model + verify findForQuery hydrates all related entities once."
+    },
+    {
+      "key": "m3-measure-action",
+      "title": "AddMeasureToModel + measure type validation",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m3",
+        "backend"
+      ],
+      "description": "Validates: type \u2208 {count, count_distinct, sum, avg, min, max, ratio}; column required for column-aggregates; expression.numerator+denominator required for ratio; calculated metrics reference existing measures only (NO arbitrary SQL \u2014 plan \u00a74.5).",
+      "acceptance": "Negative tests: bad type, missing column for sum, ratio without operands, arbitrary SQL in expression \u2014 all rejected with typed exceptions."
+    },
+    {
+      "key": "m3-dim-action",
+      "title": "AddDimensionToModel + time-dimension grains",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m3",
+        "backend"
+      ],
+      "description": "Validates type \u2208 {string, number, boolean, time}; time dimensions require allowed_time_grains \u2286 {day, week, month, quarter, year}.",
+      "acceptance": "Negative tests for invalid grains/types."
+    },
+    {
+      "key": "m3-join-action",
+      "title": "AddJoinToModel \u2014 explicit, prefer many_to_one",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m3",
+        "backend"
+      ],
+      "description": "Persists analytics_joins. Warns on one_to_many; rejects cycles between joins (per \u00a717.1 fanout mitigation). V1 strongly biases many_to_one fact\u2192dimension.",
+      "acceptance": "Pest: one_to_many produces a warning surface; cycle-introducing join is rejected."
+    },
+    {
+      "key": "m3-policy-action",
+      "title": "AddAccessPolicy action \u2014 value_from_context rules only in V1",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m3",
+        "backend",
+        "security"
+      ],
+      "description": "V1 supports rules of the form `{field, operator \u2208 {=, in}, value_from_context}` (per \u00a74.8 / \u00a717.2). No DSL beyond this in V1 (\u00a721).",
+      "acceptance": "Pest: rule with arbitrary SQL or unsupported operator is rejected."
+    },
+    {
+      "key": "m3-validator",
+      "title": "ValidateSemanticModel action \u2014 pre-execution structural check",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m3",
+        "backend"
+      ],
+      "description": "Walks the loaded model and asserts: base_table set, every measure references a defined column (or known measure for ratios), every dimension column belongs to a defined join alias or base table, every join target exists, at least one is_required access policy when model is enabled for embedding.",
+      "acceptance": "Negative test cases for each invariant."
+    },
+    {
+      "key": "m3-livewire-builder",
+      "title": "Livewire: model + measure + dimension + join + policy editors",
+      "type": "task",
+      "priority": 2,
+      "labels": [
+        "v1",
+        "m3",
+        "livewire",
+        "frontend"
+      ],
+      "description": "Plan \u00a713.1 MeasureEditor as the template; extend to dimensions, joins, policies. Uses Flux form components; alpha_dash validation on names.",
+      "acceptance": "Manual: build a complete orders model from scratch in the UI."
+    },
+    {
+      "key": "m3-preview",
+      "title": "Preview semantic query in builder (uses real pipeline)",
+      "type": "task",
+      "priority": 2,
+      "labels": [
+        "v1",
+        "m3",
+        "livewire",
+        "frontend"
+      ],
+      "description": "Builder button runs a small SemanticQuery via the same RunSemanticQuery action used in embed mode, returning \u2264100 rows. Confirms 'preview uses the same query pipeline as embed mode' (\u00a714.3 M5 exit criteria).",
+      "acceptance": "Preview button returns rows for a valid model; rejected with typed error for invalid one."
+    },
+    {
+      "key": "m4-dialect-contract",
+      "title": "SqlDialect interface (\u00a78.3)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m4",
+        "backend"
+      ],
+      "description": "Per \u00a78.3: quoteIdentifier, dateTrunc(grain,expr), limitOffset(?int,?int), aggregate(type,expr), placeholder(position). SqlDialectResolver::forDataSource(DataSource) returns the right dialect by driver.",
+      "acceptance": "Interface compiles; resolver covers postgres/mysql/warehouse."
+    },
+    {
+      "key": "m4-postgres-dialect",
+      "title": "PostgresDialect",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m4",
+        "backend",
+        "postgres"
+      ],
+      "description": "Verbatim from \u00a78.3: \"-quoted identifiers (with \"\" escape), DATE_TRUNC('grain', expr), LIMIT/OFFSET, COUNT/SUM/AVG/MIN/MAX/COUNT(DISTINCT), '?' placeholder.",
+      "acceptance": "Snapshot tests per \u00a718.2 lock the generated SQL for canonical cases."
+    },
+    {
+      "key": "m4-mysql-dialect",
+      "title": "MySqlDialect (no DATE_TRUNC \u2014 use DATE_FORMAT/equivalent)",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m4",
+        "backend",
+        "mysql"
+      ],
+      "description": "Backtick-quote identifiers; emulate DATE_TRUNC via DATE_FORMAT for each supported grain or use DATE_SUB(... INTERVAL ...) tricks. Document the chosen approach in design notes.",
+      "design": "Recommended: a small per-grain mapping returning a TRUNCATE-equivalent expression. Avoid MySQL 8 window/CTE features in V1 for compatibility.",
+      "acceptance": "Snapshot tests for all 5 grains; aggregates match Postgres dialect output shape."
+    },
+    {
+      "key": "m4-warehouse-dialect",
+      "title": "Warehouse dialect (BigQuery OR Snowflake per m2-warehouse-decision)",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m4",
+        "backend",
+        "warehouse"
+      ],
+      "description": "If BigQuery: backtick identifiers, DATE_TRUNC(DATE(expr), DAY|WEEK|...) per \u00a78.3. If Snowflake: \"-quoted identifiers, DATE_TRUNC('grain', expr).",
+      "acceptance": "Snapshot tests for 5 grains + aggregates."
+    },
+    {
+      "key": "m4-field-validator",
+      "title": "FieldValidator \u2014 semantic-field allowlist before compile",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m4",
+        "backend",
+        "security"
+      ],
+      "description": "Validates every measure/dimension/filter field in SemanticQuery exists on the loaded SemanticModel and is is_public (or whitelisted). Raises UnknownSemanticFieldException / FieldNotPublicException before any SQL is generated.",
+      "acceptance": "Pest: unknown field \u2192 typed exception; private field requested by an embed token \u2192 rejected."
+    },
+    {
+      "key": "m4-access-compiler",
+      "title": "AccessPolicyCompiler \u2014 bind tenant context as parameters",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m4",
+        "backend",
+        "security"
+      ],
+      "description": "Compiles is_required access policies into (sql, bindings) where context values (e.g., external_account_id) are appended to bindings, never string-concatenated (\u00a74.8). Returns ['', []] when no required policies.",
+      "acceptance": "Pest: tenant rule emits 'orders.account_id = ?' and binds the context value; SQL never contains the raw value."
+    },
+    {
+      "key": "m4-compiler",
+      "title": "InternalQueryCompiler::compile (\u00a78.4)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m4",
+        "backend"
+      ],
+      "description": "Implement the \u00a78.4 reference compiler: SELECT (dimensions + time dimension dateTrunc + measure aggregates) FROM base_table AS alias JOIN... WHERE (filters AND access_policy) GROUP BY (dimensions + time-trunc expr) LIMIT/OFFSET. Returns CompiledQuery(sql, bindings, dialect, metadata).",
+      "acceptance": "Snapshot tests for: revenue by country; revenue by month + country with tenant policy; ratio measure (avg_order_value)."
+    },
+    {
+      "key": "m4-internal-provider",
+      "title": "InternalSemanticProvider (\u00a77) \u2014 implements SemanticProvider",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m4",
+        "backend"
+      ],
+      "description": "Per \u00a77: load model, FieldValidator, compile via InternalQueryCompiler, resolve connector via DataSourceConnectorManager, return SemanticResult. listModels/listFields hit SemanticModelRepository. capabilities() returns supportsExternalModels=false + dialect-derived time grains.",
+      "acceptance": "End-to-end test against docker Postgres returns expected rows for the revenue-by-country canonical query."
+    },
+    {
+      "key": "m4-snapshot-tests",
+      "title": "Per-dialect SQL snapshot test suite (\u00a718.2)",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m4",
+        "testing"
+      ],
+      "description": "Pest snapshot tests covering: each aggregate, each time grain, tenant policy injection, ratio measure, joined dimension. Run per dialect.",
+      "acceptance": "Snapshot files committed; CI fails on accidental SQL drift."
+    },
+    {
+      "key": "m5-dashboard-actions",
+      "title": "CreateDashboard / AddChartToDashboard / PublishDashboard",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m5",
+        "backend"
+      ],
+      "description": "Action triplet. AddChartToDashboard persists a Chart + ChartQuery (the SemanticQuery JSON) + ChartLayout. PublishDashboard flips is_published and validates every chart's SemanticQuery passes FieldValidator.",
+      "acceptance": "Pest: published dashboard fails fast if any chart references a missing field."
+    },
+    {
+      "key": "m5-chart-types",
+      "title": "Chart type registry: number_card, bar_chart, line_chart, table",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m5",
+        "backend"
+      ],
+      "description": "Server-side ChartType registry: declares required SemanticResult shape (e.g., number_card \u2192 1 measure, 0 dimensions; bar_chart \u2192 \u22651 dimension + \u22651 measure). Used by chart builder validation and runtime renderer adapters.",
+      "acceptance": "ChartType::validate(SemanticResult) returns typed errors for shape mismatches."
+    },
+    {
+      "key": "m5-livewire-dashboards",
+      "title": "Livewire: dashboard list/CRUD/preview + chart CRUD",
+      "type": "task",
+      "priority": 2,
+      "labels": [
+        "v1",
+        "m5",
+        "livewire",
+        "frontend"
+      ],
+      "description": "Dashboard pages with chart-add modal, simple grid layout, preview button. Layout persists to analytics_chart_layouts.",
+      "acceptance": "Manual: build a 4-chart dashboard, preview, edit a chart's measure, layout survives reload."
+    },
+    {
+      "key": "m5-preview-pipeline",
+      "title": "Dashboard preview reuses embed query pipeline",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m5",
+        "backend"
+      ],
+      "description": "Preview routes go through the same QueryExecutionPipeline as embeds \u2014 same FieldValidator, AccessPolicyCompiler, cache. Difference: ProviderContext is built from the authenticated org user, not an embed token.",
+      "acceptance": "Field disallowed by embed is also rejected in preview."
+    },
+    {
+      "key": "m6-token-payload",
+      "title": "EmbedTokenPayload DTO + claims schema (\u00a711.1)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m6",
+        "backend",
+        "security"
+      ],
+      "description": "Claims: iss, sub, organization_id, project_id, embed_id, external_account_id, allowed_dashboard_ids[], allowed_model_names[], filters{}, theme{}, iat, exp. Strict toClaims/fromClaims round-trip with required-field validation.",
+      "acceptance": "Pest: missing required claim \u2192 InvalidEmbedTokenException."
+    },
+    {
+      "key": "m6-token-mgr",
+      "title": "EmbedTokenManager \u2014 generate/decode HS256 JWT (\u00a711.2)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m6",
+        "backend",
+        "security"
+      ],
+      "description": "Verbatim \u00a711.2. firebase/php-jwt; key from config('embedlayer.embed_signing_key'); decode wraps Throwable as InvalidEmbedTokenException.",
+      "acceptance": "Pest: tampered signature \u2192 InvalidEmbedTokenException; expired exp \u2192 InvalidEmbedTokenException."
+    },
+    {
+      "key": "m6-generate-action",
+      "title": "GenerateEmbedToken action \u2014 validate against saved Embed config",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m6",
+        "backend",
+        "security"
+      ],
+      "description": "Action takes embed_id + external_account_id + filters + theme; cross-checks allowed_dashboard_ids/model_names against the persisted Embed row (per \u00a711.3: 'token claims are not trusted blindly').",
+      "acceptance": "Pest: token request asking for a dashboard not owned by the embed \u2192 rejected before signing."
+    },
+    {
+      "key": "m6-resolve-action",
+      "title": "ResolveEmbedContext \u2014 build ProviderContext from token",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m6",
+        "backend",
+        "security"
+      ],
+      "description": "Decodes token, hydrates ProviderContext (organizationId, projectId, externalAccountId, embedId, claims). Reads the Embed row and intersects token claims with persisted config.",
+      "acceptance": "Pest: token claim 'allowed_dashboard_ids' that drifts from DB \u2192 rejected."
+    },
+    {
+      "key": "m6-domains",
+      "title": "Allowed-origin enforcement (CORS + Referer/Origin check) on embed routes",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m6",
+        "backend",
+        "security"
+      ],
+      "description": "Middleware compares request Origin/Referer against analytics_embed_domains for the embed. Reject with 403 on mismatch. (\u00a718.4 'invalid domain' test must pass.)",
+      "acceptance": "Pest: request with wrong Origin \u2192 403."
+    },
+    {
+      "key": "m6-iframe-route",
+      "title": "GET /embed/dashboards/{id} \u2014 iframe entry point",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m6",
+        "backend"
+      ],
+      "description": "Validates token (query string), renders blade shell that boots the Svelte runtime (m7) with the dashboard payload preloaded. Inline CSP that restricts framing to allowed domains.",
+      "acceptance": "Manual: <iframe src=...?token=...> renders a dashboard."
+    },
+    {
+      "key": "m6-api-routes",
+      "title": "Embed API: GET /api/embed/dashboards/{id} + POST .../charts/{id}/query",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m6",
+        "backend"
+      ],
+      "description": "Bearer-token auth middleware uses ResolveEmbedContext. Endpoints return DashboardPayload and ChartResultPayload per \u00a72.4. Never returns SQL, credentials, or provider type.",
+      "acceptance": "Pest: response JSON shape matches \u00a72.4 exactly; no leaked fields."
+    },
+    {
+      "key": "m6-pipeline",
+      "title": "QueryExecutionPipeline + all pipes (\u00a710)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m6",
+        "backend"
+      ],
+      "description": "Laravel Pipeline order from \u00a710: ValidateEmbedToken \u2192 ResolveTenantContext \u2192 ResolveDashboardContext \u2192 ValidateQueryPermissions \u2192 ApplyAccessPolicies \u2192 ResolveSemanticProvider \u2192 CheckCache \u2192 ExecuteSemanticQuery \u2192 NormalizeResult \u2192 StoreResultCache. SemanticQueryRequest payload per \u00a710.",
+      "acceptance": "Pest: a failure in any pipe short-circuits with the right exception class."
+    },
+    {
+      "key": "m6-permissions-pipe",
+      "title": "ValidateQueryPermissions pipe \u2014 disallowed-field guard",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m6",
+        "backend",
+        "security"
+      ],
+      "description": "Per \u00a710 sample. For every measure & dimension in the request, dashboard.allowsMeasure/allowsDimension must be true; else UnauthorizedSemanticFieldException. Allowed lists come from the Chart row, not the token.",
+      "acceptance": "Pest: chart-configured measures only; injected extra fields blocked."
+    },
+    {
+      "key": "m6-policies-pipe",
+      "title": "ApplyAccessPolicies pipe \u2014 server-side tenant filter injection",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m6",
+        "backend",
+        "security"
+      ],
+      "description": "Append required access policies as Filters on the SemanticQuery (so they flow through the compiler with bindings). Plan \u00a717.2 'never depend only on frontend filters'.",
+      "acceptance": "Pest: missing tenant context with is_required policy \u2192 MissingTenantContextException."
+    },
+    {
+      "key": "m6-normalize-pipe",
+      "title": "NormalizeResult pipe \u2014 provider-agnostic column/row shape",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m6",
+        "backend"
+      ],
+      "description": "Coerces SemanticResult into the canonical {columns:[{key,label,type}], rows:[{k:v}]} shape from \u00a72.4. Annotates metadata with provider_type, cache_hit, query_time_ms \u2014 but never with SQL or credentials.",
+      "acceptance": "Pest: result JSON matches \u00a72.4 shape; no metadata leakage."
+    },
+    {
+      "key": "m6-embed-tests",
+      "title": "Embed security test suite (\u00a718.4)",
+      "type": "task",
+      "priority": 0,
+      "labels": [
+        "v1",
+        "m6",
+        "testing",
+        "security"
+      ],
+      "description": "Pest scenarios: expired token, invalid signature, unauthorized dashboard, missing tenant context, disallowed field, invalid domain, valid token success.",
+      "acceptance": "All seven scenarios green; failing assertions block deploy."
+    },
+    {
+      "key": "m7-pkg-setup",
+      "title": "Scaffold packages/embed-runtime (Vite + Svelte + TS)",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m7",
+        "frontend",
+        "svelte"
+      ],
+      "description": "Per \u00a712. packages/embed-runtime with src/index.ts, components/, api/, charts/adapters/, types/. Vite library mode build \u2192 dist/embed.js consumable by both iframe shell and (later) host pages.",
+      "acceptance": "npm run build emits embed.js; bundle size budget recorded (target <100KB gzipped initially)."
+    },
+    {
+      "key": "m7-types",
+      "title": "TypeScript types: DashboardPayload, ChartResultPayload, SemanticQuery, Filter",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m7",
+        "frontend"
+      ],
+      "description": "Mirror the Laravel API response shapes from \u00a72.4 and \u00a76. Single source of truth for runtime; later generate from a backend OpenAPI spec.",
+      "acceptance": "tsc --strict passes; runtime never sees provider-specific fields."
+    },
+    {
+      "key": "m7-api-client",
+      "title": "EmbedLayerApiClient (\u00a712.3) with retry/error policy",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m7",
+        "frontend"
+      ],
+      "description": "loadDashboard(id) and runChartQuery(dashId, chartId, filters). Token in Authorization header. Surfaces typed errors to onError host callback (V2) and to default error boundary.",
+      "acceptance": "Vitest: 401 \u2192 AuthError; 5xx \u2192 RuntimeError; 200 \u2192 typed payload."
+    },
+    {
+      "key": "m7-dashboard-component",
+      "title": "EmbedLayerDashboard.svelte \u2014 loader + layout",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m7",
+        "frontend",
+        "svelte"
+      ],
+      "description": "Loads dashboard, fans out chart queries in parallel, renders ChartRenderer per chart, listens to FilterBar changes, debounces refetch.",
+      "acceptance": "Manual: full dashboard renders with all four chart types."
+    },
+    {
+      "key": "m7-chart-renderer",
+      "title": "ChartRenderer + adapters: NumberCard, BarChart, LineChart, TableChart",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "m7",
+        "frontend"
+      ],
+      "description": "One adapter per chart type. Lightweight charting (D3 primitives or layercake) \u2014 avoid heavy chart libs in V1. Adapter signature: (columns, rows, options) \u2192 mounted Svelte component.",
+      "acceptance": "Visual test: each adapter renders correctly with seeded payloads."
+    },
+    {
+      "key": "m7-filter-bar",
+      "title": "FilterBar.svelte + filter state store",
+      "type": "task",
+      "priority": 2,
+      "labels": [
+        "v1",
+        "m7",
+        "frontend"
+      ],
+      "description": "Date-range + categorical filters; emits SemanticQuery-compatible filter objects to the dashboard component. Filter state persisted in URL hash for shareable iframe links.",
+      "acceptance": "Filter change refetches affected charts only."
+    },
+    {
+      "key": "m7-loading-error",
+      "title": "Loading skeletons + error boundaries per chart",
+      "type": "task",
+      "priority": 2,
+      "labels": [
+        "v1",
+        "m7",
+        "frontend"
+      ],
+      "description": "Each chart shows skeleton during fetch, error card on failure (one chart's failure must not break the dashboard \u2014 same isolation principle as \u00a716.5).",
+      "acceptance": "Manual: simulate a 500 on one chart; rest of dashboard still renders."
+    },
+    {
+      "key": "m7-iframe-bundle",
+      "title": "iframe bundle wiring + CDN deployment path",
+      "type": "task",
+      "priority": 2,
+      "labels": [
+        "v1",
+        "m7",
+        "frontend",
+        "devops"
+      ],
+      "description": "Vite build outputs to public/embed/embed.js (served by Laravel) for V1; document CDN path for V2 (cdn.embedlayer.com).",
+      "acceptance": "Iframe at /embed/dashboards/{id}?token=... renders without external network requests beyond the Laravel API."
+    },
+    {
+      "key": "mcache-keygen",
+      "title": "QueryCacheKey::make (\u00a714.2) \u2014 tenant-aware sha256",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "caching",
+        "backend"
+      ],
+      "description": "Verbatim \u00a714.2: hash(sha256, json_encode({organization_id, project_id, external_account_id, chart_id, query})). Document JSON canonicalization (sorted keys) so equivalent queries hash identically.",
+      "acceptance": "Pest: equivalent SemanticQueries with reordered fields hash to the same key."
+    },
+    {
+      "key": "mcache-pipes",
+      "title": "CheckCache + StoreResultCache pipes",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "caching",
+        "backend"
+      ],
+      "description": "CheckCache: if hit and !expired, populate SemanticQueryRequest::$result + cacheHit=true and short-circuit. StoreResultCache: on miss, persist result + expires_at = now+TTL. Per-chart TTL falls back to config default.",
+      "acceptance": "Pest: cold path stores, warm path hits within TTL, post-TTL re-fetches."
+    },
+    {
+      "key": "mobs-runs-writer",
+      "title": "Persist analytics_query_runs from the pipeline (\u00a719)",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "observability",
+        "backend"
+      ],
+      "description": "After ExecuteSemanticQuery / on exception, write a query_runs row: provider_type, model_name, dashboard_id, chart_id, status, duration_ms, cache_hit, query_shape (NO bindings), error_message (sanitized).",
+      "acceptance": "Pest: success/failed/timeout/cache_hit cases all produce a row with the right status."
+    },
+    {
+      "key": "mobs-livewire",
+      "title": "Livewire screen: recent query runs (per org)",
+      "type": "task",
+      "priority": 3,
+      "labels": [
+        "v1",
+        "observability",
+        "livewire"
+      ],
+      "description": "Read-only operator screen showing recent runs with filters by dashboard, status, provider_type. Useful for V1 debugging.",
+      "acceptance": "Manual: screen lists runs and links to the dashboard/chart."
+    },
+    {
+      "key": "msec-readonly-docs",
+      "title": "Docs: read-only DB user setup per supported driver",
+      "type": "task",
+      "priority": 2,
+      "labels": [
+        "v1",
+        "security",
+        "docs"
+      ],
+      "description": "README-style doc giving the exact GRANT / role for Postgres, MySQL, and the chosen warehouse so customers connect with least privilege (\u00a717.4)."
+    },
+    {
+      "key": "msec-rotation",
+      "title": "Credential rotation support in CredentialVault + Livewire flow",
+      "type": "task",
+      "priority": 2,
+      "labels": [
+        "v1",
+        "security",
+        "backend"
+      ],
+      "description": "Rotate-key action re-encrypts every encrypted_config row with a new key, with safe rollback. Surface a 'Rotate credentials' control on the data source detail page.",
+      "acceptance": "Pest: rotation re-encrypts all rows; old key can no longer decrypt."
+    },
+    {
+      "key": "msec-binding-redaction",
+      "title": "Sanitize sensitive query bindings out of logs and query_runs",
+      "type": "task",
+      "priority": 1,
+      "labels": [
+        "v1",
+        "security",
+        "observability"
+      ],
+      "description": "Per \u00a717.4 'avoid logging SQL bindings if they contain sensitive values' + \u00a719 'do not store raw sensitive query bindings'. Add a redaction filter pass on logger context.",
+      "acceptance": "Pest: simulated query with binding 'acct_456' never appears in storage/logs.*"
+    },
+    {
+      "key": "v2-webcomp",
+      "title": "V2: <embed-layer-dashboard/> web component runtime (\u00a715.2)",
+      "type": "epic",
+      "priority": 1,
+      "labels": [
+        "v2",
+        "frontend"
+      ],
+      "description": "Move beyond iframe-only: custom element registration, shadow DOM/scoped styles, responsive height, global + chart-level filters, drilldown events, host callbacks (onFilterChange, onChartClick, onError), theme tokens, loading skeletons, error boundaries."
+    },
+    {
+      "key": "v2-cube",
+      "title": "V2: CubeSemanticProvider adapter (\u00a715.3)",
+      "type": "epic",
+      "priority": 1,
+      "labels": [
+        "v2",
+        "backend"
+      ],
+      "description": "Implement SemanticProvider over Cube REST. CubeFieldMapper translates SemanticQuery\u2194Cube query. Cube remains source-of-truth for Cube-backed models; cache metadata only."
+    },
+    {
+      "key": "v2-dbt",
+      "title": "V2: DbtSemanticLayerProvider adapter (\u00a715.4)",
+      "type": "epic",
+      "priority": 1,
+      "labels": [
+        "v2",
+        "backend"
+      ],
+      "description": "SemanticProvider over dbt Semantic Layer GraphQL. Map internal model concept \u2194 metric namespace; metric \u2194 measure; dimension \u2194 dimension; filter \u2194 where/group-by constraint."
+    },
+    {
+      "key": "v2-cache-v2",
+      "title": "V2: cache warming, SWR, per-chart/provider TTL, invalidation (\u00a715.5)",
+      "type": "epic",
+      "priority": 2,
+      "labels": [
+        "v2",
+        "caching",
+        "backend"
+      ]
+    },
+    {
+      "key": "v2-governance",
+      "title": "V2: model + dashboard versioning + publish workflow (\u00a715.6)",
+      "type": "epic",
+      "priority": 1,
+      "labels": [
+        "v2",
+        "backend"
+      ],
+      "description": "Add analytics_semantic_model_versions + analytics_dashboard_versions; dashboards pin to a published model version so model edits don't break customer-facing embeds."
+    },
+    {
+      "key": "v3-ai-models",
+      "title": "V3: AI-assisted semantic model creation (\u00a716.2)",
+      "type": "epic",
+      "priority": 2,
+      "labels": [
+        "v3",
+        "ai",
+        "backend"
+      ],
+      "description": "AI suggests measures/dimensions/labels from schema introspection. Output is structured JSON; human reviews; validation stays deterministic; AI cannot publish production models."
+    },
+    {
+      "key": "v3-nl-query",
+      "title": "V3: natural-language \u2192 SemanticQuery (\u00a716.3)",
+      "type": "epic",
+      "priority": 2,
+      "labels": [
+        "v3",
+        "ai",
+        "backend"
+      ],
+      "description": "NL compiles to SemanticQuery, NEVER to SQL. Routed through the standard pipeline so governance applies."
+    },
+    {
+      "key": "v3-preaggs",
+      "title": "V3: pre-aggregations / summary tables (\u00a716.4)",
+      "type": "epic",
+      "priority": 3,
+      "labels": [
+        "v3",
+        "backend",
+        "performance"
+      ],
+      "description": "Pre-aggregation definitions; per-dialect CREATE TABLE AS / materialized views; refresh jobs; query planner chooses aggregate when compatible."
+    },
+    {
+      "key": "v3-multi-provider",
+      "title": "V3: multi-provider dashboards (\u00a716.5)",
+      "type": "epic",
+      "priority": 2,
+      "labels": [
+        "v3",
+        "backend"
+      ],
+      "description": "Dashboard can combine charts from internal + Cube + dbt SL. Provider-aware chart config, cross-provider filter normalization, per-provider cache, error isolation \u2014 one chart's failure must not break the dashboard."
+    },
+    {
+      "key": "v3-anomaly",
+      "title": "V3: anomaly detection + metric testing",
+      "type": "epic",
+      "priority": 3,
+      "labels": [
+        "v3",
+        "backend"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from_key": "top",
+      "to_key": "v1",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "top",
+      "to_key": "v2",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "top",
+      "to_key": "v3",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v1",
+      "to_key": "m0",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v1",
+      "to_key": "m1",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v1",
+      "to_key": "m2",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v1",
+      "to_key": "m3",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v1",
+      "to_key": "m4",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v1",
+      "to_key": "m5",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v1",
+      "to_key": "m6",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v1",
+      "to_key": "m7",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v1",
+      "to_key": "mcache",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v1",
+      "to_key": "mobs",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v1",
+      "to_key": "msec",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m0",
+      "to_key": "m0-namespace",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m0",
+      "to_key": "m0-config",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m0",
+      "to_key": "m0-orgs",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m0",
+      "to_key": "m0-credvault",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m1",
+      "to_key": "m1-mig-data-sources",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m1",
+      "to_key": "m1-mig-providers",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m1",
+      "to_key": "m1-mig-models",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m1",
+      "to_key": "m1-mig-measures",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m1",
+      "to_key": "m1-mig-dimensions",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m1",
+      "to_key": "m1-mig-joins",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m1",
+      "to_key": "m1-mig-policies",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m1",
+      "to_key": "m1-mig-dashboards",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m1",
+      "to_key": "m1-mig-embeds",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m1",
+      "to_key": "m1-mig-queryops",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m1",
+      "to_key": "m1-models",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m1",
+      "to_key": "m1-policies",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m1",
+      "to_key": "m1-actions",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m2",
+      "to_key": "m2-contract",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m2",
+      "to_key": "m2-postgres",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m2",
+      "to_key": "m2-mysql",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m2",
+      "to_key": "m2-warehouse-decision",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m2",
+      "to_key": "m2-warehouse-conn",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m2",
+      "to_key": "m2-introspect-action",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m2",
+      "to_key": "m2-test-conn-action",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m2",
+      "to_key": "m2-timeouts-limits",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m2",
+      "to_key": "m2-livewire-conn",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m2",
+      "to_key": "m2-integration-tests",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m3",
+      "to_key": "m3-dtos",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m3",
+      "to_key": "m3-model-action",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m3",
+      "to_key": "m3-measure-action",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m3",
+      "to_key": "m3-dim-action",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m3",
+      "to_key": "m3-join-action",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m3",
+      "to_key": "m3-policy-action",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m3",
+      "to_key": "m3-validator",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m3",
+      "to_key": "m3-livewire-builder",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m3",
+      "to_key": "m3-preview",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m4",
+      "to_key": "m4-dialect-contract",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m4",
+      "to_key": "m4-postgres-dialect",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m4",
+      "to_key": "m4-mysql-dialect",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m4",
+      "to_key": "m4-warehouse-dialect",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m4",
+      "to_key": "m4-field-validator",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m4",
+      "to_key": "m4-access-compiler",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m4",
+      "to_key": "m4-compiler",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m4",
+      "to_key": "m4-internal-provider",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m4",
+      "to_key": "m4-snapshot-tests",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m5",
+      "to_key": "m5-dashboard-actions",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m5",
+      "to_key": "m5-chart-types",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m5",
+      "to_key": "m5-livewire-dashboards",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m5",
+      "to_key": "m5-preview-pipeline",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m6",
+      "to_key": "m6-token-payload",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m6",
+      "to_key": "m6-token-mgr",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m6",
+      "to_key": "m6-generate-action",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m6",
+      "to_key": "m6-resolve-action",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m6",
+      "to_key": "m6-domains",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m6",
+      "to_key": "m6-iframe-route",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m6",
+      "to_key": "m6-api-routes",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m6",
+      "to_key": "m6-pipeline",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m6",
+      "to_key": "m6-permissions-pipe",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m6",
+      "to_key": "m6-policies-pipe",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m6",
+      "to_key": "m6-normalize-pipe",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m6",
+      "to_key": "m6-embed-tests",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m7",
+      "to_key": "m7-pkg-setup",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m7",
+      "to_key": "m7-types",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m7",
+      "to_key": "m7-api-client",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m7",
+      "to_key": "m7-dashboard-component",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m7",
+      "to_key": "m7-chart-renderer",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m7",
+      "to_key": "m7-filter-bar",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m7",
+      "to_key": "m7-loading-error",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m7",
+      "to_key": "m7-iframe-bundle",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "mcache",
+      "to_key": "mcache-keygen",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "mcache",
+      "to_key": "mcache-pipes",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "mobs",
+      "to_key": "mobs-runs-writer",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "mobs",
+      "to_key": "mobs-livewire",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "msec",
+      "to_key": "msec-readonly-docs",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "msec",
+      "to_key": "msec-rotation",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "msec",
+      "to_key": "msec-binding-redaction",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v2",
+      "to_key": "v2-webcomp",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v2",
+      "to_key": "v2-cube",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v2",
+      "to_key": "v2-dbt",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v2",
+      "to_key": "v2-cache-v2",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v2",
+      "to_key": "v2-governance",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v3",
+      "to_key": "v3-ai-models",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v3",
+      "to_key": "v3-nl-query",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v3",
+      "to_key": "v3-preaggs",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v3",
+      "to_key": "v3-multi-provider",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "v3",
+      "to_key": "v3-anomaly",
+      "type": "parent-child"
+    },
+    {
+      "from_key": "m0-orgs",
+      "to_key": "m0-namespace",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m0-config",
+      "to_key": "m0-namespace",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m0-credvault",
+      "to_key": "m0-config",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m1-mig-data-sources",
+      "to_key": "m0-orgs",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m1-mig-data-sources",
+      "to_key": "m0-credvault",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m1-mig-providers",
+      "to_key": "m1-mig-data-sources",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m1-mig-models",
+      "to_key": "m1-mig-providers",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m1-mig-measures",
+      "to_key": "m1-mig-models",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m1-mig-dimensions",
+      "to_key": "m1-mig-models",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m1-mig-joins",
+      "to_key": "m1-mig-models",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m1-mig-policies",
+      "to_key": "m1-mig-models",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m1-mig-dashboards",
+      "to_key": "m1-mig-models",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m1-mig-embeds",
+      "to_key": "m1-mig-dashboards",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m1-mig-queryops",
+      "to_key": "m1-mig-dashboards",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m1-models",
+      "to_key": "m1-mig-queryops",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m1-models",
+      "to_key": "m1-mig-embeds",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m1-policies",
+      "to_key": "m1-models",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m1-actions",
+      "to_key": "m1-models",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-contract",
+      "to_key": "m0-namespace",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-postgres",
+      "to_key": "m2-contract",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-postgres",
+      "to_key": "m0-credvault",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-postgres",
+      "to_key": "m1-models",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-mysql",
+      "to_key": "m2-contract",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-warehouse-conn",
+      "to_key": "m2-contract",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-warehouse-conn",
+      "to_key": "m2-warehouse-decision",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-test-conn-action",
+      "to_key": "m2-postgres",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-test-conn-action",
+      "to_key": "m1-actions",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-introspect-action",
+      "to_key": "m2-postgres",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-introspect-action",
+      "to_key": "m1-actions",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-timeouts-limits",
+      "to_key": "m2-postgres",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-livewire-conn",
+      "to_key": "m2-test-conn-action",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-livewire-conn",
+      "to_key": "m2-introspect-action",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-integration-tests",
+      "to_key": "m2-postgres",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m2-integration-tests",
+      "to_key": "m2-mysql",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m3-dtos",
+      "to_key": "m0-namespace",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m3-model-action",
+      "to_key": "m1-models",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m3-model-action",
+      "to_key": "m3-dtos",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m3-measure-action",
+      "to_key": "m3-model-action",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m3-dim-action",
+      "to_key": "m3-model-action",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m3-join-action",
+      "to_key": "m3-model-action",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m3-policy-action",
+      "to_key": "m3-model-action",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m3-validator",
+      "to_key": "m3-measure-action",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m3-validator",
+      "to_key": "m3-dim-action",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m3-validator",
+      "to_key": "m3-join-action",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m3-validator",
+      "to_key": "m3-policy-action",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m3-livewire-builder",
+      "to_key": "m3-validator",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m3-preview",
+      "to_key": "m3-livewire-builder",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m3-preview",
+      "to_key": "m6-pipeline",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-dialect-contract",
+      "to_key": "m3-dtos",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-postgres-dialect",
+      "to_key": "m4-dialect-contract",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-mysql-dialect",
+      "to_key": "m4-dialect-contract",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-warehouse-dialect",
+      "to_key": "m4-dialect-contract",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-warehouse-dialect",
+      "to_key": "m2-warehouse-decision",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-field-validator",
+      "to_key": "m3-validator",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-access-compiler",
+      "to_key": "m4-dialect-contract",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-access-compiler",
+      "to_key": "m3-policy-action",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-compiler",
+      "to_key": "m4-postgres-dialect",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-compiler",
+      "to_key": "m4-access-compiler",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-compiler",
+      "to_key": "m4-field-validator",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-internal-provider",
+      "to_key": "m4-compiler",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-internal-provider",
+      "to_key": "m2-postgres",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-snapshot-tests",
+      "to_key": "m4-postgres-dialect",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-snapshot-tests",
+      "to_key": "m4-mysql-dialect",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m4-snapshot-tests",
+      "to_key": "m4-warehouse-dialect",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m5-dashboard-actions",
+      "to_key": "m1-models",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m5-dashboard-actions",
+      "to_key": "m4-field-validator",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m5-chart-types",
+      "to_key": "m3-dtos",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m5-livewire-dashboards",
+      "to_key": "m5-dashboard-actions",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m5-livewire-dashboards",
+      "to_key": "m5-chart-types",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m5-preview-pipeline",
+      "to_key": "m6-pipeline",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-token-payload",
+      "to_key": "m0-config",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-token-mgr",
+      "to_key": "m6-token-payload",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-generate-action",
+      "to_key": "m6-token-mgr",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-generate-action",
+      "to_key": "m1-models",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-resolve-action",
+      "to_key": "m6-token-mgr",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-domains",
+      "to_key": "m1-mig-embeds",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-iframe-route",
+      "to_key": "m6-resolve-action",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-iframe-route",
+      "to_key": "m6-domains",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-api-routes",
+      "to_key": "m6-resolve-action",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-api-routes",
+      "to_key": "m6-pipeline",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-pipeline",
+      "to_key": "m4-internal-provider",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-pipeline",
+      "to_key": "m6-resolve-action",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-permissions-pipe",
+      "to_key": "m6-pipeline",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-policies-pipe",
+      "to_key": "m4-access-compiler",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-policies-pipe",
+      "to_key": "m6-pipeline",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-normalize-pipe",
+      "to_key": "m6-pipeline",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-embed-tests",
+      "to_key": "m6-api-routes",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-embed-tests",
+      "to_key": "m6-permissions-pipe",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-embed-tests",
+      "to_key": "m6-policies-pipe",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m6-embed-tests",
+      "to_key": "m6-domains",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m7-pkg-setup",
+      "to_key": "m6-api-routes",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m7-types",
+      "to_key": "m6-normalize-pipe",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m7-api-client",
+      "to_key": "m7-pkg-setup",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m7-api-client",
+      "to_key": "m7-types",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m7-dashboard-component",
+      "to_key": "m7-api-client",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m7-chart-renderer",
+      "to_key": "m7-types",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m7-chart-renderer",
+      "to_key": "m5-chart-types",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m7-filter-bar",
+      "to_key": "m7-dashboard-component",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m7-loading-error",
+      "to_key": "m7-dashboard-component",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m7-iframe-bundle",
+      "to_key": "m7-dashboard-component",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m7-iframe-bundle",
+      "to_key": "m7-chart-renderer",
+      "type": "blocks"
+    },
+    {
+      "from_key": "m7-iframe-bundle",
+      "to_key": "m6-iframe-route",
+      "type": "blocks"
+    },
+    {
+      "from_key": "mcache-keygen",
+      "to_key": "m3-dtos",
+      "type": "blocks"
+    },
+    {
+      "from_key": "mcache-pipes",
+      "to_key": "mcache-keygen",
+      "type": "blocks"
+    },
+    {
+      "from_key": "mcache-pipes",
+      "to_key": "m1-mig-queryops",
+      "type": "blocks"
+    },
+    {
+      "from_key": "mcache-pipes",
+      "to_key": "m6-pipeline",
+      "type": "blocks"
+    },
+    {
+      "from_key": "mobs-runs-writer",
+      "to_key": "m1-mig-queryops",
+      "type": "blocks"
+    },
+    {
+      "from_key": "mobs-runs-writer",
+      "to_key": "m6-pipeline",
+      "type": "blocks"
+    },
+    {
+      "from_key": "mobs-livewire",
+      "to_key": "mobs-runs-writer",
+      "type": "blocks"
+    },
+    {
+      "from_key": "msec-rotation",
+      "to_key": "m0-credvault",
+      "type": "blocks"
+    },
+    {
+      "from_key": "msec-binding-redaction",
+      "to_key": "mobs-runs-writer",
+      "type": "blocks"
+    },
+    {
+      "from_key": "v2",
+      "to_key": "v1",
+      "type": "blocks"
+    },
+    {
+      "from_key": "v3",
+      "to_key": "v2",
+      "type": "blocks"
+    },
+    {
+      "from_key": "v2-webcomp",
+      "to_key": "m7-iframe-bundle",
+      "type": "related"
+    },
+    {
+      "from_key": "v2-cube",
+      "to_key": "m4-internal-provider",
+      "type": "related"
+    },
+    {
+      "from_key": "v2-dbt",
+      "to_key": "m4-internal-provider",
+      "type": "related"
+    },
+    {
+      "from_key": "v2-cache-v2",
+      "to_key": "mcache-pipes",
+      "type": "related"
+    },
+    {
+      "from_key": "v2-governance",
+      "to_key": "m1-mig-models",
+      "type": "related"
+    },
+    {
+      "from_key": "v3-ai-models",
+      "to_key": "m3-validator",
+      "type": "related"
+    },
+    {
+      "from_key": "v3-nl-query",
+      "to_key": "m6-pipeline",
+      "type": "related"
+    },
+    {
+      "from_key": "v3-preaggs",
+      "to_key": "m4-compiler",
+      "type": "related"
+    },
+    {
+      "from_key": "v3-multi-provider",
+      "to_key": "v2-cube",
+      "type": "blocks"
+    },
+    {
+      "from_key": "v3-multi-provider",
+      "to_key": "v2-dbt",
+      "type": "blocks"
+    }
+  ]
+}
