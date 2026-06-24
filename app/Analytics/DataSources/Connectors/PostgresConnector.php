@@ -11,6 +11,7 @@ use App\Analytics\DataSources\DTOs\DataSourceCapabilities;
 use App\Analytics\DataSources\DTOs\SchemaCatalog;
 use App\Analytics\DataSources\Support\AnalyticsConnectionFactory;
 use App\Analytics\DataSources\Support\ConnectionErrorRedactor;
+use App\Analytics\DataSources\Support\QueryGuard;
 use App\Analytics\Semantic\DTOs\SemanticResult;
 use App\Analytics\Support\Exceptions\QueryExecutionException;
 use App\Models\DataSource;
@@ -51,15 +52,22 @@ final class PostgresConnector implements DataSourceConnector
     {
         $started = microtime(true);
 
+        $sql = QueryGuard::ensureRowLimit($query->sql);
+
         try {
-            $rows = $this->makeConnection()->select($query->sql, $query->bindings);
+            $connection = $this->makeConnection();
+            QueryGuard::applyStatementTimeout($connection, 'postgres');
+            $rows = $connection->select($sql, $query->bindings);
         } catch (Throwable $e) {
             throw new QueryExecutionException(ConnectionErrorRedactor::redact($e->getMessage()), previous: $e);
         }
 
         return SemanticResult::fromRows(
             rows: array_map(static fn ($row): array => (array) $row, $rows),
-            metadata: ['query_time_ms' => (int) ((microtime(true) - $started) * 1000)],
+            metadata: [
+                'query_time_ms' => (int) ((microtime(true) - $started) * 1000),
+                'row_limit_applied' => $sql !== $query->sql,
+            ],
         );
     }
 
