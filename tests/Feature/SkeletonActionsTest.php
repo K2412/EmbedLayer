@@ -132,7 +132,6 @@ it('CreateDashboard, AddChartToDashboard, PublishDashboard flow', function () {
 
 it('skeleton actions for later milestones explicitly throw RuntimeException', function () {
     $cases = [
-        ValidateSemanticModel::class => fn ($a) => $a->handle(SemanticModel::factory()->create()),
         GenerateEmbedToken::class => fn ($a) => $a->handle(Embed::factory()->create(), []),
         ResolveEmbedContext::class => fn ($a) => $a->handle('token'),
     ];
