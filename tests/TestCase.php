@@ -2,9 +2,11 @@
 
 namespace Tests;
 
+use App\Analytics\Embeds\EmbedTokenManager;
 use App\Analytics\Security\CredentialVault;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Str;
 use Laravel\Fortify\Features;
 
 abstract class TestCase extends BaseTestCase
@@ -15,7 +17,9 @@ abstract class TestCase extends BaseTestCase
 
         config()->set('embedlayer.credential_encryption_key', Encrypter::generateKey('aes-256-gcm'));
         config()->set('embedlayer.previous_credential_encryption_keys', []);
+        config()->set('embedlayer.embed_signing_key', (string) Str::uuid().(string) Str::uuid());
         $this->app->forgetInstance(CredentialVault::class);
+        $this->app->forgetInstance(EmbedTokenManager::class);
     }
 
     protected function skipUnlessFortifyHas(string $feature, ?string $message = null): void

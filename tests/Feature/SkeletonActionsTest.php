@@ -6,17 +6,13 @@ use App\Analytics\Actions\Dashboards\AddChartToDashboard;
 use App\Analytics\Actions\Dashboards\CreateDashboard;
 use App\Analytics\Actions\Dashboards\PublishDashboard;
 use App\Analytics\Actions\DataSources\CreateDataSource;
-use App\Analytics\Actions\Embeds\GenerateEmbedToken;
-use App\Analytics\Actions\Embeds\ResolveEmbedContext;
 use App\Analytics\Actions\SemanticModels\AddDimensionToModel;
 use App\Analytics\Actions\SemanticModels\AddJoinToModel;
 use App\Analytics\Actions\SemanticModels\AddMeasureToModel;
 use App\Analytics\Actions\SemanticModels\CreateSemanticModel;
-use App\Analytics\Actions\SemanticModels\ValidateSemanticModel;
 use App\Analytics\Security\CredentialVault;
 use App\Analytics\Support\Exceptions\CredentialVaultException;
 use App\Models\AnalyticsProject;
-use App\Models\Embed;
 use App\Models\Organization;
 use App\Models\SemanticModel;
 use App\Models\SemanticProvider;
@@ -113,7 +109,7 @@ it('CreateDashboard, AddChartToDashboard, PublishDashboard flow', function () {
 
     expect($dashboard->is_published)->toBeFalse();
 
-    $chart = (new AddChartToDashboard)->handle(
+    $chart = app(AddChartToDashboard::class)->handle(
         dashboard: $dashboard,
         model: $model,
         name: 'Total Revenue',
@@ -128,15 +124,4 @@ it('CreateDashboard, AddChartToDashboard, PublishDashboard flow', function () {
 
     expect($published->is_published)->toBeTrue()
         ->and($published->published_at)->not->toBeNull();
-});
-
-it('skeleton actions for later milestones explicitly throw RuntimeException', function () {
-    $cases = [
-        GenerateEmbedToken::class => fn ($a) => $a->handle(Embed::factory()->create(), []),
-        ResolveEmbedContext::class => fn ($a) => $a->handle('token'),
-    ];
-
-    foreach ($cases as $class => $invoke) {
-        expect(fn () => $invoke(new $class))->toThrow(RuntimeException::class);
-    }
 });
